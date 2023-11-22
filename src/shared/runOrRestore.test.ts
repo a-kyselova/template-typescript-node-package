@@ -42,15 +42,14 @@ describe("runOrRestore", () => {
 		});
 
 		const actual = await runOrRestore({
-			args: [],
-			label: "testing",
 			run: vi.fn(),
+			skipRestore: true,
 		});
 
-		expect(actual).toEqual(0);
+		expect(actual).toBe(0);
 	});
 
-	it("returns 1 and does not restore the repository when run rejects, skipRestore is false, and shouldRestore is not confirmed", async () => {
+	it("returns 2 and does not restore the repository when run rejects and skipRestore is true", async () => {
 		mockGetInputValuesAndOctokit.mockResolvedValue({
 			octokit: undefined,
 			values: {
@@ -60,17 +59,15 @@ describe("runOrRestore", () => {
 		mockConfirm.mockResolvedValue(false);
 
 		const actual = await runOrRestore({
-			args: [],
-			label: "testing",
 			run: vi.fn().mockRejectedValue(new Error("Oh no!")),
+			skipRestore: true,
 		});
 
-		expect(actual).toEqual(1);
-
-		expect(mock$).not.toHaveBeenCalled();
+		expect(actual).toBe(2);
+		expect(mock$).toHaveBeenCalledTimes(0);
 	});
 
-	it("returns 1 and restores the repository when run rejects, skipRestore is false, and shouldRestore is confirmed", async () => {
+	it("returns 2 and restores the repository when run rejects and skipRestore is false", async () => {
 		mockGetInputValuesAndOctokit.mockResolvedValue({
 			octokit: undefined,
 			values: {
@@ -80,13 +77,19 @@ describe("runOrRestore", () => {
 		mockConfirm.mockResolvedValue(true);
 
 		const actual = await runOrRestore({
-			args: [],
-			label: "testing",
 			run: vi.fn().mockRejectedValue(new Error("Oh no!")),
+			skipRestore: false,
 		});
 
-		expect(actual).toEqual(1);
-
-		expect(mock$).toHaveBeenCalledWith(["git restore ."]);
+		expect(actual).toBe(2);
+		expect(mock$.mock.calls).toMatchInlineSnapshot(`
+			[
+			  [
+			    [
+			      "git restore .",
+			    ],
+			  ],
+			]
+		`);
 	});
 });

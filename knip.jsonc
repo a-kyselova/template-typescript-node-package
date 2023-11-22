@@ -1,13 +1,13 @@
 {
-	"$schema": "https://unpkg.com/knip@next/schema.json",
+	"$schema": "https://unpkg.com/knip@latest/schema.json",
 	"entry": [
 		"src/index.ts!",
-		"src/hydrate/index.ts",
-		"src/setup/index.ts",
+		"src/guide/index.ts",
+		"src/initialize/index.ts",
+		"src/migrate/index.ts",
 		"script/*e2e.js"
 	],
-	"ignoreBinaries": ["dedupe", "gh"],
-	"ignoreDependencies": ["all-contributors-cli", "c8"],
+	"ignoreBinaries": ["gh"],
 	"ignoreExportsUsedInFile": {
 		"interface": true,
 		"type": true

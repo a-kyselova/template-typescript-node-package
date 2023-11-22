@@ -1,10 +1,13 @@
 # Development
 
+> If you'd like a more guided walkthrough, see [Contributing to a create-typescript-app Repository](https://www.joshuakgoldberg.com/blog/contributing-to-a-create-typescript-app-repository).
+> It'll walk you through the common activities you'll need to contribute.
+
 After [forking the repo from GitHub](https://help.github.com/articles/fork-a-repo) and [installing pnpm](https://pnpm.io/installation):
 
 ```shell
-git clone https://github.com/<your-name-here>/template-typescript-node-package
-cd template-typescript-node-package
+git clone https://github.com/<your-name-here>/create-typescript-app
+cd create-typescript-app
 pnpm install
 ```
 
@@ -13,13 +16,17 @@ pnpm install
 
 ## Building
 
-Run [TypeScript](https://typescriptlang.org) locally to type check and build source files from `src/` into output files in `lib/`:
+Run [**tsup**](https://tsup.egoist.dev) locally to build source files from `src/` into output files in `lib/`:
+
+```shell
+pnpm build
+```
+
+Add `--watch` to run the builder in a watch mode that continuously cleans and recreates `lib/` as you save files:
 
 ```shell
 pnpm build --watch
 ```
-
-You should also see suggestions from TypeScript in your editor.
 
 ## Formatting
 
@@ -29,7 +36,7 @@ It should be applied automatically when you save files in VS Code or make a Git 
 To manually reformat all files, you can run:
 
 ```shell
-pnpm format:write
+pnpm format --write
 ```
 
 ## Linting
@@ -37,12 +44,22 @@ pnpm format:write
 This package includes several forms of linting to enforce consistent code quality and styling.
 Each should be shown in VS Code, and can be run manually on the command-line:
 
+- `pnpm lint` ([ESLint](https://eslint.org) with [typescript-eslint](https://typescript-eslint.io)): Lints JavaScript and TypeScript source files
 - `pnpm lint:knip` ([knip](https://github.com/webpro/knip)): Detects unused files, dependencies, and code exports
 - `pnpm lint:md` ([Markdownlint](https://github.com/DavidAnson/markdownlint)): Checks Markdown source files
-- `pnpm lint:package` ([npm-package-json-lint](https://npmpackagejsonlint.org/)): Lints the `package.json` file
+- `pnpm lint:package-json` ([npm-package-json-lint](https://npmpackagejsonlint.org/)): Lints the `package.json` file
 - `pnpm lint:packages` ([pnpm dedupe --check](https://pnpm.io/cli/dedupe)): Checks for unnecessarily duplicated packages in the `pnpm-lock.yml` file
 - `pnpm lint:spelling` ([cspell](https://cspell.org)): Spell checks across all source files
-- `pnpm lint` ([ESLint](https://eslint.org) with [typescript-eslint](https://typescript-eslint.io)): Lints JavaScript and TypeScript source files
+
+Read the individual documentation for each linter to understand how it can be configured and used best.
+
+For example, ESLint can be run with `--fix` to auto-fix some lint rule complaints:
+
+```shell
+pnpm run lint --fix
+```
+
+Note that you'll likely need to run `pnpm build` before `pnpm lint` so that lint rules which check the file system can pick up on any built files.
 
 ## Testing
 
@@ -67,47 +84,131 @@ Calls to `console.log`, `console.warn`, and other console methods will cause a t
 This repository includes a [VS Code launch configuration](https://code.visualstudio.com/docs/editor/debugging) for debugging unit tests.
 To launch it, open a test file, then run _Debug Current Test File_ from the VS Code Debug panel (or press F5).
 
-## The Hydration Script
+## Type Checking
 
-This template's "hydration" script is located in `src/hydrate/`.
-It needs to be [built](#building) before it can be run.
+You should be able to see suggestions from [TypeScript](https://typescriptlang.org) in your editor for all open files.
 
-Be warned that running the hydration script in a repository -including this one- will modify that repository.
-To test out the script, you may want to create a new test repository to run on:
+However, it can be useful to run the TypeScript command-line (`tsc`) to type check all files in `src/`:
+
+```shell
+pnpm tsc
+```
+
+Add `--watch` to keep the type checker running in a watch mode that updates the display as you save files:
+
+```shell
+pnpm tsc --watch
+```
+
+## Setup Scripts
+
+As described in the `README.md` file and `docs/`, this template repository comes with three scripts that can set up an existing or new repository.
+
+Each follows roughly the same general flow:
+
+1. `bin/index.ts` uses `bin/mode.ts` to determine which of the three setup scripts to run
+2. `readOptions` parses in options from local files, Git commands, npm APIs, and/or files on disk
+3. `runOrRestore` wraps the setup script's main logic in a friendly prompt wrapper
+4. The setup script wraps each portion of its main logic with `withSpinner`
+   - Each step of setup logic is generally imported from within `src/steps`
+5. A call to `outro` summarizes the results for the user
+
+> **Warning**
+> Each setup script overrides many files in the directory they're run in.
+> Make sure to save any changes you want to preserve before running them.
+
+### The Creation Script
+
+This template's "creation" script is located in `src/create/`.
+You can run it locally with `node bin/index.js --mode create`.
+Note that files need to be built with `pnpm run build` beforehand.
+
+#### Testing the Creation Script
+
+You can run the end-to-end test for creation locally on the command-line.
+Note that the files need to be built with `pnpm run build` beforehand.
+
+```shell
+pnpm run test:create
+```
+
+That end-to-end test executes `script/create-test-e2e.js`, which:
+
+1. Runs the creation script to create a new `test-repository` child directory and repository, capturing code coverage
+2. Asserts that commands such as `build` and `lint` each pass
+
+The `pnpm run test:create` script is run in CI to ensure that templating changes are in sync with the template's actual files.
+See `.github/workflows/test-create.yml`.
+
+### The Initialization Script
+
+This template's "initialization" script is located in `src/initialize/`.
+You can run it locally with `pnpm run initialize`.
+It uses [`tsx`](https://github.com/esbuild-kit/tsx) so you don't need to build files before running.
+
+```shell
+pnpm run initialize
+```
+
+#### Testing the Initialization Script
+
+You can run the end-to-end test for initializing locally on the command-line.
+Note that files need to be built with `pnpm run build` beforehand.
+
+```shell
+pnpm run test:initialize
+```
+
+That end-to-end test executes `script/initialize-test-e2e.js`, which:
+
+1. Runs the initialization script using `--skip-github-api` and other skip flags
+2. Checks that the local repository's files were changed correctly (e.g. removed initialization-only files)
+3. Runs `pnpm run lint:knip` to make sure no excess dependencies or files were left over
+4. Resets everything
+5. Runs initialization a second time, capturing test coverage
+
+The `pnpm run test:initialize` script is run in CI to ensure that templating changes are in sync with the template's actual files.
+See `.github/workflows/test-initialize.yml`.
+
+### The Migration Script
+
+This template's "migration" script is located in `src/migrate/`.
+Note that files need to be built with `pnpm run build` beforehand.
+
+To test out the script locally, run it from a different repository's directory:
+
+```shell
+cd ../other-repo
+node ../create-typescript-app/bin/migrate.js
+```
+
+The migration script will work on any directory.
+You can try it out in a blank directory with scripts like:
 
 ```shell
 cd ..
 mkdir temp
 cd temp
-echo node_modules > .gitignore
-git init
-npm init --yes
+node ../create-typescript-app/bin/migrate.js
 ```
 
-Then, in that directory, you can directly call the hydration script:
+#### Testing the Migration Script
+
+You can run the end-to-end test for migrating locally on the command-line:
 
 ```shell
-node ../template-typescript-node-package/lib/hydrate/index.js -- description "Hooray, trying things out locally."
+pnpm run test:migrate
 ```
 
-Along with the hydration script itself, end-to-end tests are removed on package setup.
+That end-to-end test executes `script/migrate-test-e2e.js`, which:
 
-## The Setup Script
+1. Runs the migration script using `--skip-github-api` and other skip flags, capturing code coverage
+2. Checks that only a small list of allowed files were changed
+3. Checks that the local repository's files were changed correctly (e.g. removed initialization-only files)
 
-This template's "setup" script is located in `script/`.
+The `pnpm run test:migrate` script is run in CI to ensure that templating changes are in sync with the template's actual files.
+See `.github/workflows/test-migrate.yml`.
 
-### Testing the Setup Script
-
-This template source includes an "end-to-end" test for `script/setup.js`.
-You can run it locally on the command-line:
-
-```shell
-pnpm run setup:test
-```
-
-That end-to-end test executes `script/setup-test-e2e.js`, which:
-
-1. Runs the setup script using `--skip-api`
-2. Checks that the local repository's files were changed correctly (e.g. removed setup-only files)
-
-Along with the setup script itself, end-to-end tests are removed on package setup.
+> Tip: if the migration test is failing in CI and you don't see any errors, try [downloading the full logs](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/using-workflow-run-logs#downloading-logs).
+> There'll likely be a list of changed files under a message like _`Oh no! Running the migrate script modified some files:`_.
+> You can also try running the test script locally.
