@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { SpyInstance, beforeEach, describe, expect, it, vi } from "vitest";
+import { MockInstance, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { logHelpText } from "./help.js";
 
@@ -13,7 +13,7 @@ vi.mock("chalk", () => ({
 	default: makeProxy({}),
 }));
 
-let mockConsoleLog: SpyInstance;
+let mockConsoleLog: MockInstance;
 
 describe("logHelpText", () => {
 	beforeEach(() => {
@@ -62,7 +62,8 @@ describe("logHelpText", () => {
 			    "
 			  --base (string): Whether to scaffold the repository with:
 			  • everything: that comes with the template (recommended)
-			  • minimum: amounts of tooling, essentially opting out of everything
+			  • common: additions to the minimal starters such as releases and tests
+			  • minimal: amounts of tooling, essentially opting out of everything
 			  • prompt: for which portions to exclude",
 			  ],
 			  [
@@ -107,8 +108,8 @@ describe("logHelpText", () => {
 			  ],
 			  [
 			    "
-			  --access (string): (\\"public\\" | \\"restricted\\"): Which npm publish --access to 
-			  release npm packages with (by default, \\"public\\")",
+			  --access (string): ("public" | "restricted"): Which npm publish --access to 
+			  release npm packages with (by default, "public")",
 			  ],
 			  [
 			    "
@@ -119,6 +120,10 @@ describe("logHelpText", () => {
 			  [
 			    "
 			  --auto: Whether to infer all options from files on disk.",
+			  ],
+			  [
+			    "
+			  --bin (string): package.json bin value to include for npx-style running.",
 			  ],
 			  [
 			    "
@@ -159,7 +164,7 @@ describe("logHelpText", () => {
 			    "
 			  --keywords (string): Any number of keywords to include in package.json (by default, 
 			  none). This can be specified any number of times, like  
-			  --keywords apple --keywords \\"banana cherry\\"",
+			  --keywords apple --keywords "banana cherry"",
 			  ],
 			  [
 			    "
@@ -200,11 +205,6 @@ describe("logHelpText", () => {
 			  ],
 			  [
 			    "
-			  --exclude-lint-deprecation: Don't use eslint-plugin-deprecation to report on usage 
-			  of code marked as @deprecated.",
-			  ],
-			  [
-			    "
 			  --exclude-lint-jsdoc: Don't use eslint-plugin-jsdoc to enforce good practices around 
 			  JSDoc comments.",
 			  ],
@@ -224,7 +224,7 @@ describe("logHelpText", () => {
 			  ],
 			  [
 			    "
-			  --exclude-lint-package-json: Don't add npm-package-json-lint to lint for 
+			  --exclude-lint-package-json: Don't add eslint-plugin-package-json to lint for 
 			  package.json correctness.",
 			  ],
 			  [
@@ -327,7 +327,7 @@ describe("logHelpText", () => {
 			  ],
 			  [
 			    "
-			  --offline: You can run create-typescript-app in an \\"offline\\" mode. 
+			  --offline: You can run create-typescript-app in an "offline" mode. 
 			  Doing so will:
 			  • Enable --exclude-all-contributors-api and --skip-github-api
 			  • Skip network calls when setting up contributors

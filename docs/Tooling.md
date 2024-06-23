@@ -8,8 +8,8 @@ Those template levels provide common presets of which tooling pieces to enable.
 
 ```plaintext
 ◆  How much tooling would you like the template to set up for you?
-│  ○ minimum     Just the bare starter tooling most repositories should ideally include.
-│  ○ common      Important additions to the minimum starters such as releases and tests.
+│  ○ minimal     Just the bare starter tooling most repositories should ideally include.
+│  ○ common      Important additions to the minimal starters such as releases and tests.
 │  ○ everything  The most thorough tooling imaginable: sorting, spellchecking, and more!
 │  ○ prompt      (allow me to customize)
 └
@@ -17,13 +17,12 @@ Those template levels provide common presets of which tooling pieces to enable.
 
 This table summarizes each tooling piece and which base levels they're included in:
 
-| Tooling Piece                                 | Exclusion Flag                 | Minimum | Common | Everything |
+| Tooling Piece                                 | Exclusion Flag                 | Minimal | Common | Everything |
 | --------------------------------------------- | ------------------------------ | ------- | ------ | ---------- |
 | [Building](#building)                         |                                | ✔️      | ✅     | 💯         |
 | [Compliance](#compliance)                     | `--exclude-compliance`         |         |        | 💯         |
 | [Contributors](#contributors)                 | `--exclude-contributors`       |         | ✅     | 💯         |
 | [Formatting](#formatting)                     |                                | ✔️      | ✅     | 💯         |
-| [Lint Deprecation](#lint-deprecation)         | `--exclude-lint-deprecation`   |         |        | 💯         |
 | [Lint ESLint](#lint-eslint)                   | `--exclude-lint-eslint`        |         |        | 💯         |
 | [Lint JSDoc](#lint-jsdoc)                     | `--exclude-lint-jsdoc`         |         |        | 💯         |
 | [Lint JSON](#lint-json)                       | `--exclude-lint-json`          |         |        | 💯         |
@@ -47,12 +46,12 @@ This table summarizes each tooling piece and which base levels they're included 
 
 See also [Options](./Options.md) for how to customize the way template is run.
 
-## "Minimum" Base Level
+## "Minimal" Base Level
 
 These tooling pieces are the ones that most repositories should generally always have enabled.
 Other pieces of tooling are likely to not work as well (or at all) if these are removed.
 
-The _"minimum"_ base is best suited for projects that are very small and not likely to change very frequently.
+The _"minimal"_ base is best suited for projects that are very small and not likely to change very frequently.
 However, they'll be missing out on many of the great tooling pieces enabled in more comprehensive bases.
 We strongly recommend using at least the [_"common"_ base level](#common-base-level) instead for most repositories.
 
@@ -84,7 +83,7 @@ pnpm run build --watch
 
 [**Prettier**](https://prettier.io): Formats code for developers and enforces a consistent formatting style.
 It's run on file save per [VS Code](https://code.visualstudio.com/docs/getstarted/settings) settings and as a Git commit hook via [husky](https://typicode.github.io/husky) and [lint-staged](https://github.com/okonet/lint-staged).
-[prettier-plugin-curly](https://github.com/JoshuaKGoldberg/prettier-plugin-curly) and [prettier-plugin-packagejson](https://github.com/matzkoh/prettier-plugin-packagejson) add in more formatting as well.
+[prettier-plugin-curly](https://github.com/JoshuaKGoldberg/prettier-plugin-curly), [prettier-plugin-sh](https://github.com/un-ts/prettier/tree/master/packages/sh), and [prettier-plugin-packagejson](https://github.com/matzkoh/prettier-plugin-packagejson) add in more formatting as well.
 
 Auto-formatting all files:
 
@@ -194,7 +193,6 @@ pnpm run lint:knip
 Additionally:
 
 - [`console-fail-test`](https://github.com/JoshuaKGoldberg/console-fail-test) will also be added to ensure tests don't accidentally log to the console.
-- [`eslint-plugin-no-only-tests`](https://github.com/levibuzolic/eslint-plugin-no-only-tests) will be added to the ESLint config to ensure calls to `it.only` or similar are not checked in
 - [`eslint-plugin-vitest`](https://github.com/veritem/eslint-plugin-vitest) will be added to the ESLint config to lint for Vitest-specific issues
 
 Running tests in watch mode:
@@ -221,7 +219,6 @@ This level is for developers who are eager to get the maximum tooling benefits i
 Using the _"everything"_ level will gain you comprehensive, strict coverage of all sorts of repository issues, including auto-sorting of properties and strict ESLint configs.
 
 - [Compliance](#compliance)
-- [Lint Deprecation](#lint-deprecation)
 - [Lint ESLint](#lint-eslint)
 - [Lint JSDoc](#lint-jsdoc)
 - [Lint JSON](#lint-json)
@@ -239,13 +236,9 @@ Using the _"everything"_ level will gain you comprehensive, strict coverage of a
 
 [**PR Compliance Action**](https://github.com/mtfoley/pr-compliance-action): Checks PRs for compliance such as addressing a linked issue and proper title formatting.
 
-### Lint Deprecation
-
-[`eslint-plugin-deprecation`](https://github.com/gund/eslint-plugin-deprecation): Reports on usage of code marked with `@deprecated`.
-
 ### Lint ESLint
 
-[`eslint-plugin-eslint-comments`](https://github.com/mysticatea/eslint-plugin-eslint-comments): Enforces proper usage of [ESLint configuration comments](https://eslint.org/docs/latest/use/configure/rules#using-configuration-comments).
+[`@eslint-community/eslint-plugin-eslint-comments`](https://eslint-community.github.io/eslint-plugin-eslint-comments): Enforces proper usage of [ESLint configuration comments](https://eslint.org/docs/latest/use/configure/rules#using-configuration-comments).
 
 ### Lint JSDoc
 
@@ -267,13 +260,7 @@ pnpm lint:md
 
 ### Lint Package JSON
 
-[`npm-package-json-lint`](https://github.com/tclindner/npm-package-json-lint): Linting for `package.json` files.
-
-```shell
-pnpm lint:package-json
-```
-
-> This is a separate linter from ESLint, but will likely eventually be switched to an ESLint plugin ([#839](https://github.com/JoshuaKGoldberg/create-typescript-app/issues/839)).
+[`eslint-plugin-package-json`](https://github.com/JoshuaKGoldberg/eslint-plugin-package-json): Linting for `package.json` files.
 
 ### Lint Packages
 

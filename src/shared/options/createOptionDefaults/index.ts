@@ -2,7 +2,7 @@ import { $ } from "execa";
 import gitRemoteOriginUrl from "git-remote-origin-url";
 import gitUrlParse from "git-url-parse";
 import lazyValue from "lazy-value";
-import fs from "node:fs/promises";
+import * as fs from "node:fs/promises";
 import npmUser from "npm-user";
 
 import { readPackageData } from "../../packages.js";
@@ -30,6 +30,7 @@ export function createOptionDefaults(promptedOptions?: PromptedOptions) {
 
 	return {
 		author: async () => (await packageAuthor()).author ?? npmDefaults.name,
+		bin: async () => (await packageData()).bin,
 		description: async () => (await packageData()).description,
 		email: async () => {
 			const gitEmail = await tryCatchAsync(

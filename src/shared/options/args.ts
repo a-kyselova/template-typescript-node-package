@@ -26,9 +26,15 @@ export const allArgOptions = {
   • everything: that comes with the template (${chalk.cyanBright.bold(
 		"recommended",
 	)})
-  • minimum: amounts of tooling, essentially opting out of everything
+  • common: additions to the minimal starters such as releases and tests
+  • minimal: amounts of tooling, essentially opting out of everything
   • prompt: for which portions to exclude`,
 		docsSection: "core",
+		type: "string",
+	},
+	bin: {
+		description: `package.json bin value to include for npx-style running.`,
+		docsSection: "optional",
 		type: "string",
 	},
 	"create-repository": {
@@ -82,12 +88,6 @@ export const allArgOptions = {
 		docsSection: "opt-out",
 		type: "boolean",
 	},
-	"exclude-lint-deprecation": {
-		description: `Don't use eslint-plugin-deprecation to report on usage 
-  of code marked as ${chalk.cyanBright("@deprecated")}.`,
-		docsSection: "opt-out",
-		type: "boolean",
-	},
 	"exclude-lint-jsdoc": {
 		description: `Don't use eslint-plugin-jsdoc to enforce good practices around 
   JSDoc comments.`,
@@ -114,7 +114,7 @@ export const allArgOptions = {
 		type: "boolean",
 	},
 	"exclude-lint-package-json": {
-		description: `Don't add npm-package-json-lint to lint for 
+		description: `Don't add eslint-plugin-package-json to lint for 
   package.json correctness.`,
 		docsSection: "opt-out",
 		type: "boolean",

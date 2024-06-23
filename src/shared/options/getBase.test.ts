@@ -10,7 +10,7 @@ vi.mock("../packages.js", () => ({
 }));
 
 describe("getBase", () => {
-	it("should return minimum with minimum scripts", async () => {
+	it("should return minimal with minimal scripts", async () => {
 		mockReadPackageData.mockImplementationOnce(() =>
 			Promise.resolve({
 				scripts: {
@@ -21,8 +21,9 @@ describe("getBase", () => {
 			}),
 		);
 
-		expect(await getBase()).toBe("minimum");
+		expect(await getBase()).toBe("minimal");
 	});
+
 	it("should return common with common scripts", async () => {
 		mockReadPackageData.mockImplementationOnce(() =>
 			Promise.resolve({
@@ -37,6 +38,7 @@ describe("getBase", () => {
 
 		expect(await getBase()).toBe("common");
 	});
+
 	it("should return everything with everything scripts", async () => {
 		mockReadPackageData.mockImplementationOnce(() =>
 			Promise.resolve({
@@ -45,8 +47,8 @@ describe("getBase", () => {
 					lint: "lint",
 					"lint:knip": "knip",
 					"lint:md": "md",
-					"lint:package-json": "package-json",
 					"lint:packages": "packages",
+					"lint:spelling": "spelling",
 					test: "test",
 				},
 			}),

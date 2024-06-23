@@ -13,8 +13,8 @@ The following required options will be prompted for interactively if not provide
 These required options determine how the creation script will set up and scaffold the repository:
 
 - `--base`: Whether to scaffold the repository with:
-  - `minimum`: Just the bare starter tooling most repositories should ideally include.
-  - `common`: Important additions to the minimum starters such as releases and tests.
+  - `minimal`: Just the bare starter tooling most repositories should ideally include
+  - `common`: Important additions to the minimal starters such as releases and tests
   - `everything`: The most thorough tooling imaginable: sorting, spellchecking, and more!
   - `prompt`: Fine-grained control over which tooling pieces to use
 - `--mode`: Whether to:
@@ -53,6 +53,7 @@ The setup scripts also allow for optional overrides of the following inputs whos
 
 - `--access` _(`"public" | "restricted"`)_: Which [`npm publish --access`](https://docs.npmjs.com/cli/commands/npm-publish#access) to release npm packages with (by default, `"public"`)
 - `--author` _(`string`)_: Username on npm to publish packages under (by default, an existing npm author, or the currently logged in npm user, or `owner.toLowerCase()`)
+- `--bin` _(`string`)_: `package.json` bin value to include for npx-style running.
 - `--directory` _(`string`)_: Directory to create the repository in (by default, the same name as the repository)
 - `--email` _(`string`)_: Email address to be listed as the point of contact in docs and packages (e.g. `example@joshuakgoldberg.com`)
   - Optionally, `--email-github` _(`string`)_ and/or `--email-npm` _(`string`)_ may be provided to use different emails in `.md` files and `package.json`, respectively
@@ -83,12 +84,12 @@ The setup scripts normally will prompt you to select how much of the tooling you
 Alternately, you can bypass that prompt by providing any number of the following CLI flags:
 
 - `--exclude-all-contributors`: Don't add all-contributors to track contributions and display them in a README.md table.
+- `--exclude-build`: Don't add a build task to generate built `.js`, `.d.ts`, and related output.
 - `--exclude-compliance`: Don't add a GitHub Actions workflow to verify that PRs match an expected format.
 - `--exclude-lint-json`: Don't apply linting and sorting to `*.json` and `*.jsonc` files.
 - `--exclude-lint-knip`: Don't add Knip to detect unused files, dependencies, and code exports.
 - `--exclude-lint-md`: Don't apply linting to `*.md` files.
-- `--exclude-lint-package-json`: Don't add npm-package-json-lint to lint for package.json correctness.
-- `--exclude-lint-deprecation`: Don't use eslint-plugin-deprecation to report on usage of code marked as `@deprecated`.
+- `--exclude-lint-package-json`: Don't add eslint-plugin-package-json to lint for package.json correctness.
 - `--exclude-lint-eslint`: Don't use eslint-plugin-eslint-comment to enforce good practices around ESLint comment directives.
 - `--exclude-lint-jsdoc`: Don't use eslint-plugin-jsdoc to enforce good practices around JSDoc comments.
 - `--exclude-lint-packages`: Don't add a pnpm dedupe workflow to ensure packages aren't duplicated unnecessarily.

@@ -8,10 +8,11 @@ export const optionsSchemaShape = {
 		.union([
 			z.literal("common"),
 			z.literal("everything"),
-			z.literal("minimum"),
+			z.literal("minimal"),
 			z.literal("prompt"),
 		])
 		.optional(),
+	bin: z.string().optional(),
 	description: z.string().optional(),
 	directory: z.string().optional(),
 	email: z
@@ -21,8 +22,8 @@ export const optionsSchemaShape = {
 		})
 		.optional(),
 	excludeAllContributors: z.boolean().optional(),
+	excludeBuild: z.boolean().optional(),
 	excludeCompliance: z.boolean().optional(),
-	excludeLintDeprecation: z.boolean().optional(),
 	excludeLintESLint: z.boolean().optional(),
 	excludeLintJSDoc: z.boolean().optional(),
 	excludeLintJson: z.boolean().optional(),

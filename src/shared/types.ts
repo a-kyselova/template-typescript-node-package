@@ -13,6 +13,7 @@ export interface AllContributorsData {
 
 export interface PartialPackageData {
 	author?: { email: string; name: string } | string;
+	bin?: string;
 	dependencies?: Record<string, string>;
 	description?: string;
 	devDependencies?: Record<string, string>;
@@ -24,7 +25,7 @@ export interface PartialPackageData {
 
 export type OptionsAccess = "public" | "restricted";
 
-export type OptionsBase = "common" | "everything" | "minimum" | "prompt";
+export type OptionsBase = "common" | "everything" | "minimal" | "prompt";
 
 export interface OptionsEmail {
 	github: string;
@@ -48,12 +49,13 @@ export interface Options {
 	access: OptionsAccess;
 	author?: string;
 	base?: OptionsBase;
+	bin?: string;
 	description: string;
 	directory: string;
 	email: OptionsEmail;
 	excludeAllContributors?: boolean;
+	excludeBuild?: boolean;
 	excludeCompliance?: boolean;
-	excludeLintDeprecation?: boolean;
 	excludeLintESLint?: boolean;
 	excludeLintJSDoc?: boolean;
 	excludeLintJson?: boolean;

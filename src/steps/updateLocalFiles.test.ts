@@ -45,7 +45,7 @@ describe("updateLocalFiles", () => {
 		await expect(async () => {
 			await updateLocalFiles({ ...options, mode: "initialize" });
 		}).rejects.toThrowErrorMatchingInlineSnapshot(
-			'"Failed to replace /Create TypeScript App/g with Stub Title in ./.github/**/*,./*.*"',
+			`[Error: Failed to replace /Create TypeScript App/g with Stub Title in ./.github/**/*,./*.*]`,
 		);
 	});
 
@@ -75,7 +75,15 @@ describe("updateLocalFiles", () => {
 			        "./.github/**/*",
 			        "./*.*",
 			      ],
-			      "from": /JoshuaKGoldberg\\(\\?!\\\\/console-fail-test\\)/g,
+			      "from": /JoshuaKGoldberg\\(\\?:\\\\/\\(\\.\\+\\)\\)\\?/g,
+			      "to": [Function],
+			    },
+			  ],
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": "package.json",
+			      "from": /JoshuaKGoldberg/g,
 			      "to": "StubOwner",
 			    },
 			  ],
@@ -93,7 +101,7 @@ describe("updateLocalFiles", () => {
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": ".eslintrc.cjs",
+			      "files": "eslint.config.js",
 			      "from": /\\\\/\\\\\\*\\\\n\\.\\+\\\\\\*\\\\/\\\\n\\\\n/gs,
 			      "to": "",
 			    },
@@ -103,15 +111,7 @@ describe("updateLocalFiles", () => {
 			      "allowEmptyPaths": true,
 			      "files": "./package.json",
 			      "from": /"author": "\\.\\+"/g,
-			      "to": "\\"author\\": \\"undefined\\"",
-			    },
-			  ],
-			  [
-			    {
-			      "allowEmptyPaths": true,
-			      "files": "./package.json",
-			      "from": /"bin": "\\.\\+\\\\n/g,
-			      "to": "",
+			      "to": ""author": "undefined"",
 			    },
 			  ],
 			  [
@@ -165,8 +165,8 @@ describe("updateLocalFiles", () => {
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": "./knip.jsonc",
-			      "from": "		\\"src/initialize/index.ts\\",
+			      "files": "./knip.json",
+			      "from": "		"src/initialize/index.ts",
 			",
 			      "to": "",
 			    },
@@ -174,8 +174,8 @@ describe("updateLocalFiles", () => {
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": "./knip.jsonc",
-			      "from": "		\\"src/migrate/index.ts\\",
+			      "files": "./knip.json",
+			      "from": "		"src/migrate/index.ts",
 			",
 			      "to": "",
 			    },
@@ -183,25 +183,33 @@ describe("updateLocalFiles", () => {
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": "./knip.jsonc",
-			      "from": "[\\"src/index.ts!\\", \\"script/initialize*.js\\"]",
-			      "to": "\\"src/index.ts!\\"",
+			      "files": "./knip.json",
+			      "from": "["src/index.ts!", "script/initialize*.js"]",
+			      "to": ""src/index.ts!"",
 			    },
 			  ],
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": "./knip.jsonc",
-			      "from": "[\\"src/**/*.ts!\\", \\"script/**/*.js\\"]",
-			      "to": "\\"src/**/*.ts!\\"",
+			      "files": "./knip.json",
+			      "from": "["src/**/*.ts!", "script/**/*.js"]",
+			      "to": ""src/**/*.ts!"",
 			    },
 			  ],
 			  [
 			    {
 			      "allowEmptyPaths": true,
 			      "files": "./README.md",
-			      "from": "> 💙 This package is based on [@StubOwner](https://github.com/StubOwner)'s [stub-repository](https://github.com/JoshuaKGoldberg/stub-repository).",
-			      "to": "> 💙 This package is based on [@JoshuaKGoldberg](https://github.com/JoshuaKGoldberg)'s [create-typescript-app](https://github.com/JoshuaKGoldberg/create-typescript-app).",
+			      "from": /> 💙 This package was templated with \\.\\+\\\\\\./g,
+			      "to": "> 💙 This package was templated with [\`create-typescript-app\`](https://github.com/JoshuaKGoldberg/create-typescript-app).",
+			    },
+			  ],
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": "./package.json",
+			      "from": /"bin": "\\.\\+\\\\n/g,
+			      "to": "",
 			    },
 			  ],
 			]
@@ -234,7 +242,15 @@ describe("updateLocalFiles", () => {
 			        "./.github/**/*",
 			        "./*.*",
 			      ],
-			      "from": /JoshuaKGoldberg\\(\\?!\\\\/console-fail-test\\)/g,
+			      "from": /JoshuaKGoldberg\\(\\?:\\\\/\\(\\.\\+\\)\\)\\?/g,
+			      "to": [Function],
+			    },
+			  ],
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": "package.json",
+			      "from": /JoshuaKGoldberg/g,
 			      "to": "StubOwner",
 			    },
 			  ],
@@ -252,7 +268,7 @@ describe("updateLocalFiles", () => {
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": ".eslintrc.cjs",
+			      "files": "eslint.config.js",
 			      "from": /\\\\/\\\\\\*\\\\n\\.\\+\\\\\\*\\\\/\\\\n\\\\n/gs,
 			      "to": "",
 			    },
@@ -262,15 +278,7 @@ describe("updateLocalFiles", () => {
 			      "allowEmptyPaths": true,
 			      "files": "./package.json",
 			      "from": /"author": "\\.\\+"/g,
-			      "to": "\\"author\\": \\"undefined\\"",
-			    },
-			  ],
-			  [
-			    {
-			      "allowEmptyPaths": true,
-			      "files": "./package.json",
-			      "from": /"bin": "\\.\\+\\\\n/g,
-			      "to": "",
+			      "to": ""author": "undefined"",
 			    },
 			  ],
 			  [
@@ -324,8 +332,8 @@ describe("updateLocalFiles", () => {
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": "./knip.jsonc",
-			      "from": "		\\"src/initialize/index.ts\\",
+			      "files": "./knip.json",
+			      "from": "		"src/initialize/index.ts",
 			",
 			      "to": "",
 			    },
@@ -333,8 +341,8 @@ describe("updateLocalFiles", () => {
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": "./knip.jsonc",
-			      "from": "		\\"src/migrate/index.ts\\",
+			      "files": "./knip.json",
+			      "from": "		"src/migrate/index.ts",
 			",
 			      "to": "",
 			    },
@@ -342,25 +350,102 @@ describe("updateLocalFiles", () => {
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": "./knip.jsonc",
-			      "from": "[\\"src/index.ts!\\", \\"script/initialize*.js\\"]",
-			      "to": "\\"src/index.ts!\\"",
+			      "files": "./knip.json",
+			      "from": "["src/index.ts!", "script/initialize*.js"]",
+			      "to": ""src/index.ts!"",
 			    },
 			  ],
 			  [
 			    {
 			      "allowEmptyPaths": true,
-			      "files": "./knip.jsonc",
-			      "from": "[\\"src/**/*.ts!\\", \\"script/**/*.js\\"]",
-			      "to": "\\"src/**/*.ts!\\"",
+			      "files": "./knip.json",
+			      "from": "["src/**/*.ts!", "script/**/*.js"]",
+			      "to": ""src/**/*.ts!"",
 			    },
 			  ],
 			  [
 			    {
 			      "allowEmptyPaths": true,
 			      "files": "./README.md",
-			      "from": "> 💙 This package is based on [@StubOwner](https://github.com/StubOwner)'s [stub-repository](https://github.com/JoshuaKGoldberg/stub-repository).",
-			      "to": "> 💙 This package is based on [@JoshuaKGoldberg](https://github.com/JoshuaKGoldberg)'s [create-typescript-app](https://github.com/JoshuaKGoldberg/create-typescript-app).",
+			      "from": /> 💙 This package was templated with \\.\\+\\\\\\./g,
+			      "to": "> 💙 This package was templated with [\`create-typescript-app\`](https://github.com/JoshuaKGoldberg/create-typescript-app).",
+			    },
+			  ],
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": "./package.json",
+			      "from": /"bin": "\\.\\+\\\\n/g,
+			      "to": "",
+			    },
+			  ],
+			]
+		`);
+	});
+
+	it("doesn't remove existing tooling when mode is migrate", async () => {
+		mockReadFileSafeAsJson.mockResolvedValue({});
+		mockReplaceInFile.mockResolvedValue([]);
+
+		await updateLocalFiles({ ...options, mode: "migrate" });
+
+		expect(mockReplaceInFile.mock.calls).toMatchInlineSnapshot(`
+			[
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": [
+			        "./.github/**/*",
+			        "./*.*",
+			      ],
+			      "from": /Create TypeScript App/g,
+			      "to": "Stub Title",
+			    },
+			  ],
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": [
+			        "./.github/**/*",
+			        "./*.*",
+			      ],
+			      "from": /JoshuaKGoldberg\\(\\?:\\\\/\\(\\.\\+\\)\\)\\?/g,
+			      "to": [Function],
+			    },
+			  ],
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": "package.json",
+			      "from": /JoshuaKGoldberg/g,
+			      "to": "StubOwner",
+			    },
+			  ],
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": [
+			        "./.github/**/*",
+			        "./*.*",
+			      ],
+			      "from": /create-typescript-app/g,
+			      "to": "stub-repository",
+			    },
+			  ],
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": "eslint.config.js",
+			      "from": /\\\\/\\\\\\*\\\\n\\.\\+\\\\\\*\\\\/\\\\n\\\\n/gs,
+			      "to": "",
+			    },
+			  ],
+			  [
+			    {
+			      "allowEmptyPaths": true,
+			      "files": "./package.json",
+			      "from": /"author": "\\.\\+"/g,
+			      "to": ""author": "undefined"",
 			    },
 			  ],
 			]
@@ -380,6 +465,7 @@ describe("updateLocalFiles", () => {
 			to: options.description,
 		});
 	});
+
 	it("replaces an existing description when it exists", async () => {
 		const existingDescription = "Existing description.";
 

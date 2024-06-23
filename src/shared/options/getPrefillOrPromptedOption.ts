@@ -2,15 +2,28 @@ import * as prompts from "@clack/prompts";
 
 import { filterPromptCancel } from "../prompts.js";
 
-export async function getPrefillOrPromptedOption(
-	name: string,
-	auto: boolean,
-	message: string,
-	getDefaultValue?: () => Promise<string | undefined>,
-) {
+export interface GetPrefillOrPromptedOptionOptions {
+	auto: boolean;
+	getDefaultValue?: () => Promise<string | undefined>;
+	message: string;
+	name: string;
+	provided?: string | undefined;
+}
+
+export async function getPrefillOrPromptedOption({
+	auto,
+	getDefaultValue,
+	message,
+	name,
+	provided,
+}: GetPrefillOrPromptedOptionOptions) {
+	if (provided) {
+		return { value: provided };
+	}
+
 	const defaultValue = await getDefaultValue?.();
 
-	if (auto || defaultValue) {
+	if (auto) {
 		return {
 			error: defaultValue
 				? undefined
