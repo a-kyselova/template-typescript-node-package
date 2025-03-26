@@ -88,7 +88,7 @@ Here we'll outline the steps required to migrate a CTA app to a GitHub Action:
    +dist
    ```
 
-   - Rather than having to remember to compile each time, we'll update our precommit hook in `.husky/precommit` to build for us on each commit:
+   - Rather than having to remember to compile each time, we'll update our pre-commit hook in `.husky/pre-commit` to build for us on each commit:
 
    ```diff
    +pnpm run build
@@ -111,16 +111,16 @@ Then:
 
    <!-- eslint-disable jsonc/sort-keys -->
 
-   ```jsonc package.json
+   ```json package.json
    {
    	"exports": {
    		".": {
    			"types": {
-   				"import": "./lib/index.d.ts",
-   				"require": "./lib/index.d.cts"
+   				"import": "lib/index.d.ts",
+   				"require": "lib/index.d.cts"
    			},
-   			"import": "./lib/index.js",
-   			"require": "./lib/index.cjs"
+   			"import": "lib/index.js",
+   			"require": "lib/index.cjs"
    		}
    	}
    }
@@ -147,43 +147,24 @@ That's reasonable.
 Unless you know a package needs to support a CJS consumer, please strongly consider keeping it ESM-only (the `create-typescript-app` default).
 ESM-only packages have a smaller footprint by virtue of including fewer files.
 
-## Is there a way to pull in template updates to previously created repositories?
-
-Not directly.
-You can always copy & paste them in manually, and/or re-run `npx create-typescript-app --mode migrate`.
-
-See [🚀 Feature: Add a script to sync the tooling updates from forked template repo #498](https://github.com/JoshuaKGoldberg/create-typescript-app/issues/498): it will likely eventually be possible.
-
 ## What about `eslint-config-prettier`?
 
 [`eslint-config-prettier`](https://github.com/prettier/eslint-config-prettier) is an ESLint plugin that serves only to turn off all rules that are unnecessary or might conflict with formatters such as Prettier.
 None of the ESLint configs enabled by this repository's tooling leave any rules enabled that would need to be disabled.
 Using `eslint-config-prettier` would be redundant.
 
-## What determines which "base" a tool goes into?
+## What determines which preset a tool goes into?
 
-The four bases correspond to what have seemed to be the most common user needs of template consumers:
+The four presets correspond to what have seemed to be the most common user needs of template consumers:
 
 1. **Minimal**: Developers who just want the barest of starting templates.
    - They may be very new to TypeScript tooling, or they may have made an informed decision that the additional tooling isn't worth the complexity and/or time investment.
-   - Tooling in this base is only what would be essential for a small TypeScript package that can be built, formatted, linted, and released.
+   - Tooling in this preset is only what would be essential for a small TypeScript package that can be built, formatted, linted, and released.
 2. **Common**: The common case of users who want the minimal tooling along with common repository management.
-   - Tooling added in this base should be essential for a TypeScript repository that additionally automates useful GitHub tasks: contributor recognition, release management, and testing.
+   - Tooling added in this preset should be essential for a TypeScript repository that additionally automates useful GitHub tasks: contributor recognition, release management, and testing.
 3. **Everything**: Power users (including this repository) who want as much of the latest and greatest safety checks and standardization as possible.
 
-Note that users can always customize exactly with portions are kept in with `--base` **`prompt`**.
-
-## Which tools can't I remove?
-
-The following pieces of this template's tooling don't have options to be removed:
-
-- Linting with ESLint and `pnpm run lint`
-- GitHub repository metadata such as the code of conduct and issue templates
-- Prettier and `pnpm run format`
-- tsup and `pnpm run build`
-- TypeScript and `pnpm run tsc`
-
-If you have a strong desire to add an `--exclude-*` flag for any of them, please do [file a feature request](https://github.com/JoshuaKGoldberg/create-typescript-app/issues/new?assignees=&labels=type%3A+feature&projects=&template=03-feature.yml&title=%F0%9F%9A%80+Feature%3A+%3Cshort+description+of+the+feature%3E).
+Note that you can always customize exactly which preset you use per [CLI](./CLI.md).
 
 ## Why does this package include so many tools?
 
@@ -191,18 +172,6 @@ This repository is meant to serve as a starter that includes all the general too
 Each of the included tools exists for a good reason and provides real value.
 
 If you don't want to use any particular tool, you can always remove it manually.
-
-### What tooling does this package use that isn't part of created repositories?
-
-Glad you asked!
-These are the projects used across many parts of `create-typescript-app`:
-
-- [Chalk](https://github.com/chalk/chalk): Makes it easier to print colored characters in the terminal.
-- [Clack](https://www.clack.cc): Provides interactive terminal prompts and loading spinners.
-- [execa](https://github.com/sindresorhus/execa): Makes it easier to run child processes.
-- [Octokit](https://github.com/octokit/octokit.js#octokitjs):
-- [tsx](https://github.com/esbuild-kit/tsx): Quickly runs TypeScript files with ESBuild.
-- [Zod](https://zod.dev): TypeScript-first schema validation with static type inference.
 
 ## Why tabs?
 
@@ -218,3 +187,11 @@ If you know of any accessibility organization that's published more formal recom
 You can adjust the tab size that GitHub uses to display files from your [account settings page](https://github.com/settings/appearance#tab-size-heading) (the default is 8 spaces).
 
 If you really want spaces in your project you can always remove the `"useTabs": true`.
+
+## How can I use `bin`?
+
+The `--bin` option allows you to create a `package.json` bin value to include for npx-style running.
+An example of this would be `"bin/index.js"`.
+You'll need to create the folders and files that `bin` references.
+
+If you'd like an example of what that looks like, take a look at the [CTA source code](https://github.com/JoshuaKGoldberg/create-typescript-app/blob/e7fafcb8968f8f6c551ab0917c9a6a849a3cba28/bin/index.js)!

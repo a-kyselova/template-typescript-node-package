@@ -1,34 +1,28 @@
 {
-	"dictionaries": ["typescript"],
+	"dictionaries": ["npm", "node", "typescript"],
 	"ignorePaths": [
-		"./coverage*",
-		"./script/__snapshots__",
+		".all-contributorsrc",
 		".github",
 		"CHANGELOG.md",
+		"coverage",
 		"lib",
 		"node_modules",
 		"pnpm-lock.yaml"
 	],
 	"words": [
-		"allcontributors",
+		"Anson",
 		"apexskier",
-		"arethetypeswrong",
-		"codespace",
-		"contributorsrc",
-		"execa",
+		"attw",
+		"automerge",
+		"boop",
+		"dbaeumer",
 		"infile",
-		"knip",
+		"joshuakgoldberg",
 		"markdownlintignore",
+		"mshick",
 		"mtfoley",
-		"npmignore",
-		"npmpackagejsonlintrc",
-		"outro",
-		"packagejson",
-		"precommit",
-		"quickstart",
-		"tada",
-		"tseslint",
-		"tsup",
-		"vitest"
+		"npmjs",
+		"stefanzweifel",
+		"tseslint"
 	]
 }

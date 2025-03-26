@@ -1,4 +1,6 @@
 #!/usr/bin/env node
-import { bin } from "../lib/bin/index.js";
+import { runTemplateCLI } from "bingo";
 
-process.exitCode = await bin(process.argv.slice(2));
+import { template } from "../lib/index.js";
+
+process.exitCode = await runTemplateCLI(template);
