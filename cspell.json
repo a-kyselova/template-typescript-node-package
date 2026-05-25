@@ -11,18 +11,16 @@
 	],
 	"words": [
 		"Anson",
+		"TSESTree",
 		"apexskier",
 		"attw",
-		"automerge",
-		"boop",
 		"dbaeumer",
+		"eslint-doc-generatorrc",
 		"infile",
 		"joshuakgoldberg",
-		"markdownlintignore",
 		"mshick",
-		"mtfoley",
-		"npmjs",
+		"octoguide",
 		"stefanzweifel",
-		"tseslint"
+		"ts-prunerc"
 	]
 }

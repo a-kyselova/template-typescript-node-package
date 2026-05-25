@@ -11,7 +11,7 @@ It'll walk you through the common activities you'll need to contribute to a repo
 Yes!
 After you set up a repository, you can substitute in any tools you'd like.
 
-If you think the tool would be broadly useful to most consumers of this template, feel free to [file a feature request](https://github.com/JoshuaKGoldberg/create-typescript-app/issues/new?assignees=&labels=type%3A+feature&projects=&template=03-feature.yml&title=%F0%9F%9A%80+Feature%3A+%3Cshort+description+of+the+feature%3E) to add it in.
+If you think the tool would be broadly useful to most consumers of this template, feel free to [file a feature request](https://github.com/JoshuaKGoldberg/create-typescript-app/issues/new?assignees=&labels=type%3A+feature&projects=&template=03-feature.yaml&title=%F0%9F%9A%80+Feature%3A+%3Cshort+description+of+the+feature%3E) to add it in.
 
 ## Can I create a GitHub action?
 
@@ -19,15 +19,14 @@ Yes! If you want to read the [GitHub Actions documentation](https://docs.github.
 Here we'll outline the steps required to migrate a CTA app to a GitHub Action:
 
 1. GitHub Actions store built output on a GitHub branch rather than in a published package on npm.
-   As a consequence we should:
-
-   - delete `.github/workflows/release.yml` and `.github/workflows/post-release.yml`.
-   - update `.github/workflows/build.yml` to ensure `dist` is up to date:
+As a consequence we should:
+   - delete `.github/workflows/release.yaml` and `.github/workflows/post-release.yaml`.
+   - update `.github/workflows/build.yaml` to ensure `dist` is up to date:
 
      <details>
-         <summary><code>.github/workflows/build.yml</code></summary>
+         <summary><code>.github/workflows/build.yaml</code></summary>
 
-     ```yml
+     ```yaml
      jobs:
        build:
          runs-on: ubuntu-latest
@@ -67,18 +66,18 @@ Here we'll outline the steps required to migrate a CTA app to a GitHub Action:
       </details>
 
    - GitHub Actions run without installing package dependencies.
-     Replace `tsup` with [`ncc`](https://github.com/vercel/ncc) to build source files and dependencies into a single JS file.
-     Delete `tsup.config.ts` then execute the following commands:
+Replace `tsdown` with [`ncc`](https://github.com/vercel/ncc) to build source files and dependencies into a single JS file.
+Delete `tsdown.config.ts` then execute the following commands:
 
    ```bash
-   pnpm remove tsup
+   pnpm remove tsdown
    pnpm add @vercel/ncc -D
    ```
 
    - Now we need to update the `build` script in our `package.json`:
 
    ```diff
-   -"build": "tsup",
+   -"build": "tsdown",
    +"build": "ncc build src/index.ts -o dist --license licenses.txt",
    ```
 
@@ -96,7 +95,7 @@ Here we'll outline the steps required to migrate a CTA app to a GitHub Action:
    npx lint-staged
    ```
 
-2. Create an [`action.yml` metadata file](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action#creating-an-action-metadata-file).
+2. Create an [`action.yaml` metadata file](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action#creating-an-action-metadata-file).
 
 It's worth reading the [GitHub Actions documentation](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action#writing-the-action-code).
 
@@ -106,10 +105,8 @@ First, I'd suggest reading [TypeScript Handbook > Modules - Introduction](https:
 
 Then:
 
-1. In `tsup.config.ts`, change the [tsup `format` option](https://tsup.egoist.dev/#bundle-formats) from `["esm"]` to `["cjs", "esm"]`
+1. In `tsdown.config.ts`, change the [tsdown `format` option](https://tsdown.dev/options/output-format) from `["esm"]` to `["cjs", "esm"]`
 2. Add a [`package.json` `"exports"` entry](https://nodejs.org/api/packages.html#subpath-exports) like:
-
-   <!-- eslint-disable jsonc/sort-keys -->
 
    ```json package.json
    {
@@ -125,8 +122,6 @@ Then:
    	}
    }
    ```
-
-   <!-- eslint-enable jsonc/sort-keys -->
 
 That should be it!
 

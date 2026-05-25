@@ -7,7 +7,9 @@ import { z } from "zod";
 import { readAccess } from "./options/readAccess.js";
 import { readAllContributors } from "./options/readAllContributors.js";
 import { readAuthor } from "./options/readAuthor.js";
+import { readBin } from "./options/readBin.js";
 import { readDescription } from "./options/readDescription.js";
+import { readDevelopmentDocumentation } from "./options/readDevelopmentDocumentation.js";
 import { readDocumentation } from "./options/readDocumentation.js";
 import { readEmailFromCodeOfConduct } from "./options/readEmailFromCodeOfConduct.js";
 import { readEmailFromGit } from "./options/readEmailFromGit.js";
@@ -15,11 +17,11 @@ import { readEmailFromNpm } from "./options/readEmailFromNpm.js";
 import { readEmails } from "./options/readEmails.js";
 import { readEmoji } from "./options/readEmoji.js";
 import { readExistingLabels } from "./options/readExistingLabels.js";
-import { readExplainer } from "./options/readExplainer.js";
 import { readFileSafe } from "./options/readFileSafe.js";
 import { readFunding } from "./options/readFunding.js";
 import { readGitDefaults } from "./options/readGitDefaults.js";
 import { readGuide } from "./options/readGuide.js";
+import { readKeywords } from "./options/readKeywords.js";
 import { readLogo } from "./options/readLogo.js";
 import { readNode } from "./options/readNode.js";
 import { readNpmDefaults } from "./options/readNpmDefaults.js";
@@ -27,13 +29,16 @@ import { readOwner } from "./options/readOwner.js";
 import { readPackageAuthor } from "./options/readPackageAuthor.js";
 import { readPackageData } from "./options/readPackageData.js";
 import { readPnpm } from "./options/readPnpm.js";
+import { readReadmeAdditional } from "./options/readReadmeAdditional.js";
+import { readReadmeExplainer } from "./options/readReadmeExplainer.js";
+import { readReadmeFootnotes } from "./options/readReadmeFootnotes.js";
+import { readReadmeUsage } from "./options/readReadmeUsage.js";
 import { readRepository } from "./options/readRepository.js";
 import { readRulesetId } from "./options/readRulesetId.js";
 import { readTitle } from "./options/readTitle.js";
-import { readUsage } from "./options/readUsage.js";
 import { readWords } from "./options/readWords.js";
 import { readWorkflowsVersions } from "./options/readWorkflowsVersions.js";
-import { zContributor, zWorkflowsVersions } from "./schemas.js";
+import { zContributor, zDocumentation, zWorkflowsVersions } from "./schemas.js";
 
 export const base = createBase({
 	options: {
@@ -45,7 +50,7 @@ export const base = createBase({
 			.optional()
 			.describe("username on npm to publish packages under"),
 		bin: z
-			.string()
+			.union([z.string(), z.record(z.string())])
 			.optional()
 			.describe('value to set in `package.json`\'s `"bin"` property'),
 		contributors: z
@@ -57,10 +62,9 @@ export const base = createBase({
 			.default("A very lovely package. Hooray!")
 			.describe("'Sentence case.' description of the repository"),
 		directory: z.string().describe("Directory to create the repository in"),
-		documentation: z
-			.string()
-			.optional()
-			.describe("any additional docs to add to .github/DEVELOPMENT.md"),
+		documentation: zDocumentation.describe(
+			"additional docs to add to .md files",
+		),
 		email: z
 			.union([
 				z.string(),
@@ -91,14 +95,10 @@ export const base = createBase({
 			)
 			.optional()
 			.describe("existing labels from the GitHub repository"),
-		explainer: z
-			.array(z.string())
-			.optional()
-			.describe("additional README.md sentence(s) describing the package"),
 		funding: z
 			.string()
 			.optional()
-			.describe("GitHub organization or username to mention in `funding.yml`"),
+			.describe("GitHub organization or username to mention in `funding.yaml`"),
 		guide: z
 			.object({
 				href: z.string(),
@@ -128,14 +128,15 @@ export const base = createBase({
 				minimum: z.string(),
 				pinned: z.string().optional(),
 			})
-			.optional()
 			.describe("Node.js engine version(s) to pin and require a minimum of"),
 		owner: z.string().describe("organization or user owning the repository"),
 		packageData: z
 			.object({
 				dependencies: z.record(z.string(), z.string()).optional(),
 				devDependencies: z.record(z.string(), z.string()).optional(),
-				scripts: z.record(z.string(), z.string()).optional(),
+				peerDependencies: z.record(z.string(), z.string()).optional(),
+				peerDependenciesMeta: z.record(z.unknown()).optional(),
+				scripts: z.record(z.string(), z.string().optional()).optional(),
 			})
 			.optional()
 			.describe("additional properties to include in `package.json`"),
@@ -151,10 +152,10 @@ export const base = createBase({
 			.optional()
 			.describe("GitHub branch ruleset ID for main branch protections"),
 		title: z.string().describe("'Title Case' title for the repository"),
-		usage: z
-			.string()
+		type: z
+			.union([z.literal("commonjs"), z.literal("module")])
 			.optional()
-			.describe("Markdown docs to put in README.md under the ## Usage heading"),
+			.describe("package.json modules type"),
 		version: z
 			.string()
 			.optional()
@@ -176,19 +177,36 @@ export const base = createBase({
 
 		const getAuthor = lazyValue(
 			async () =>
-				await readAuthor(getPackageAuthor, getNpmDefaults, options.owner),
+				await readAuthor(
+					getPackageAuthor,
+					getNpmDefaults,
+					getGitUser,
+					options.owner,
+				),
 		);
 
-		const getBin = lazyValue(async () => (await getPackageData()).bin);
+		const getBin = lazyValue(async () => await readBin(getPackageData));
 
 		const getEmoji = lazyValue(async () => await readEmoji(getDescription));
 
 		const getDescription = lazyValue(
-			async () => await readDescription(getPackageData, getReadme),
+			async () =>
+				await readDescription(getPackageData, getReadme, getRepository),
+		);
+
+		const getDevelopmentDocumentation = lazyValue(
+			async () => await readDevelopmentDocumentation(take),
 		);
 
 		const getDocumentation = lazyValue(
-			async () => await readDocumentation(take),
+			async () =>
+				await readDocumentation(
+					getDevelopmentDocumentation,
+					getReadmeAdditional,
+					getReadmeExplainer,
+					getReadmeFootnotes,
+					getReadmeUsage,
+				),
 		);
 
 		const getEmail = lazyValue(
@@ -197,7 +215,12 @@ export const base = createBase({
 					getEmailFromCodeOfConduct,
 					getEmailFromGit,
 					getEmailFromNpm,
+					getPackageAuthor,
 				),
+		);
+
+		const getKeywords = lazyValue(
+			async () => await readKeywords(getPackageData),
 		);
 
 		const getEmailFromCodeOfConduct = lazyValue(
@@ -214,11 +237,14 @@ export const base = createBase({
 			async () => await readExistingLabels(take, getOwner, getRepository),
 		);
 
-		const getExplainer = lazyValue(async () => await readExplainer(getReadme));
-
 		const getFunding = lazyValue(async () => await readFunding(take));
 
 		const getGitDefaults = lazyValue(async () => await readGitDefaults(take));
+
+		const getGitUser = lazyValue(
+			async () =>
+				await take(inputFromScript, { command: "git config user.name" }),
+		);
 
 		const getGuide = lazyValue(async () => await readGuide(take));
 
@@ -260,6 +286,22 @@ export const base = createBase({
 			async () => await readFileSafe("README.md", ""),
 		);
 
+		const getReadmeAdditional = lazyValue(
+			async () => await readReadmeAdditional(getReadme),
+		);
+
+		const getReadmeExplainer = lazyValue(
+			async () => await readReadmeExplainer(getReadme),
+		);
+
+		const getReadmeFootnotes = lazyValue(
+			async () => await readReadmeFootnotes(getReadme),
+		);
+
+		const getReadmeUsage = lazyValue(
+			async () => await readReadmeUsage(getReadme),
+		);
+
 		const getRepository = lazyValue(
 			async () => await readRepository(getGitDefaults, getPackageData, options),
 		);
@@ -272,9 +314,7 @@ export const base = createBase({
 			async () => await readTitle(getReadme, getRepository),
 		);
 
-		const getUsage = lazyValue(
-			async () => await readUsage(getEmoji, getReadme, getRepository),
-		);
+		const getType = lazyValue(async () => (await getPackageData()).type);
 
 		const getVersion = lazyValue(async () => (await getPackageData()).version);
 
@@ -294,9 +334,9 @@ export const base = createBase({
 			email: getEmail,
 			emoji: getEmoji,
 			existingLabels: getExistingLabels,
-			explainer: getExplainer,
 			funding: getFunding,
 			guide: getGuide,
+			keywords: getKeywords,
 			logo: getLogo,
 			node: getNode,
 			owner: getOwner,
@@ -305,7 +345,7 @@ export const base = createBase({
 			repository: getRepository,
 			rulesetId: getRulesetId,
 			title: getTitle,
-			usage: getUsage,
+			type: getType,
 			version: getVersion,
 			words: getWords,
 			workflowsVersions: getWorkflowData,

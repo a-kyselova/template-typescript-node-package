@@ -12,12 +12,12 @@ export const blockESLintYML = base.createBlock({
 					extensions: [
 						{
 							extends: [
-								'yml.configs["flat/recommended"]',
+								'yml.configs["flat/standard"]',
 								'yml.configs["flat/prettier"]',
 							],
 							files: ["**/*.{yml,yaml}"],
 							rules: {
-								"yml/file-extension": ["error", { extension: "yml" }],
+								"yml/file-extension": "error",
 								"yml/sort-keys": [
 									"error",
 									{

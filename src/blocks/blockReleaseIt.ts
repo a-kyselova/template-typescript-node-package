@@ -1,9 +1,10 @@
+import { z } from "zod";
+
 import { base } from "../base.js";
 import { getPackageDependencies } from "../data/packageData.js";
 import { resolveUses } from "./actions/resolveUses.js";
-import { blockCSpell } from "./blockCSpell.js";
 import { blockPackageJson } from "./blockPackageJson.js";
-import { blockRemoveDependencies } from "./blockRemoveDependencies.js";
+import { blockREADME } from "./blockREADME.js";
 import { blockRepositorySecrets } from "./blockRepositorySecrets.js";
 import { createSoloWorkflowFile } from "./files/createSoloWorkflowFile.js";
 
@@ -11,28 +12,40 @@ export const blockReleaseIt = base.createBlock({
 	about: {
 		name: "release-it",
 	},
-	produce({ options }) {
+	addons: {
+		builders: z
+			.array(
+				z.object({
+					order: z.number(),
+					run: z.string(),
+				}),
+			)
+			.default([]),
+	},
+	produce({ addons, options }) {
+		const { builders } = addons;
+
 		return {
 			addons: [
-				blockCSpell({
-					words: ["apexskier"],
-				}),
 				blockPackageJson({
 					properties: {
 						devDependencies: getPackageDependencies(
 							"@release-it/conventional-changelog",
 							"release-it",
 						),
-						publishConfig: {
-							provenance: true,
-						},
 						scripts: {
 							"should-semantic-release": undefined,
 						},
 					},
 				}),
-				blockRemoveDependencies({
-					dependencies: ["should-semantic-release"],
+				blockREADME({
+					badges: [
+						{
+							alt: "📦 npm version",
+							href: `http://npmjs.com/package/${options.repository}`,
+							src: `https://img.shields.io/npm/v/${options.repository}?color=21bb42&label=%F0%9F%93%A6%20npm`,
+						},
+					],
 				}),
 				blockRepositorySecrets({
 					secrets: [
@@ -40,17 +53,13 @@ export const blockReleaseIt = base.createBlock({
 							description: "a GitHub PAT with repo and workflow permissions",
 							name: "ACCESS_TOKEN",
 						},
-						{
-							description: "an npm access token with automation permissions",
-							name: "NPM_TOKEN",
-						},
 					],
 				}),
 			],
 			files: {
 				".github": {
 					workflows: {
-						"post-release.yml": createSoloWorkflowFile({
+						"post-release.yaml": createSoloWorkflowFile({
 							name: "Post Release",
 							on: {
 								release: {
@@ -95,7 +104,7 @@ export const blockReleaseIt = base.createBlock({
 								},
 							],
 						}),
-						"release.yml": createSoloWorkflowFile({
+						"release.yaml": createSoloWorkflowFile({
 							concurrency: {
 								group: "${{ github.workflow }}",
 							},
@@ -125,17 +134,16 @@ export const blockReleaseIt = base.createBlock({
 								{
 									uses: "./.github/actions/prepare",
 								},
-								{
-									run: "pnpm build",
-								},
+								...builders
+									.sort((a, b) => a.order - b.order)
+									.map(({ run }) => ({ run })),
 								{
 									env: {
 										GITHUB_TOKEN: "${{ secrets.ACCESS_TOKEN }}",
-										NPM_TOKEN: "${{ secrets.NPM_TOKEN }}",
 									},
 									uses: resolveUses(
 										"JoshuaKGoldberg/release-it-action",
-										"v0.2.2",
+										"v0.4.0",
 										options.workflowsVersions,
 									),
 								},
@@ -152,13 +160,11 @@ export const blockReleaseIt = base.createBlock({
 						release: true,
 						releaseName: "v${version}",
 					},
-					npm: {
-						publishArgs: [`--access ${options.access}`, "--provenance"],
-					},
+					npm: { skipChecks: true },
 					plugins: {
 						"@release-it/conventional-changelog": {
 							infile: "CHANGELOG.md",
-							preset: "angular",
+							preset: "conventionalcommits",
 							types: [
 								{ section: "Features", type: "feat" },
 								{ section: "Bug Fixes", type: "fix" },
@@ -175,6 +181,12 @@ export const blockReleaseIt = base.createBlock({
 					},
 				}),
 			},
+			suggestions: [
+				[
+					`- add ${options.owner}/${options.repository} and \`release.yaml\` as a Trusted Publisher on:`,
+					`   https://www.npmjs.com/package/${options.repository}/access`,
+				].join("\n"),
+			],
 		};
 	},
 });

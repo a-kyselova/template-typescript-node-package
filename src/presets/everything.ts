@@ -11,12 +11,12 @@ import { blockESLintPerfectionist } from "../blocks/blockESLintPerfectionist.js"
 import { blockESLintRegexp } from "../blocks/blockESLintRegexp.js";
 import { blockESLintYML } from "../blocks/blockESLintYML.js";
 import { blockKnip } from "../blocks/blockKnip.js";
-import { blockMarkdownlint } from "../blocks/blockMarkdownlint.js";
 import { blockNvmrc } from "../blocks/blockNvmrc.js";
+import { blockOctoGuideStrict } from "../blocks/blockOctoGuideStrict.js";
 import { blockPnpmDedupe } from "../blocks/blockPnpmDedupe.js";
-import { blockPRCompliance } from "../blocks/blockPRCompliance.js";
 import { blockPrettierPluginCurly } from "../blocks/blockPrettierPluginCurly.js";
 import { blockPrettierPluginPackageJson } from "../blocks/blockPrettierPluginPackageJson.js";
+import { blockPrettierPluginSentencesPerLine } from "../blocks/blockPrettierPluginSentencesPerLine.js";
 import { blockPrettierPluginSh } from "../blocks/blockPrettierPluginSh.js";
 import { blockRenovate } from "../blocks/blockRenovate.js";
 import { blockVSCode } from "../blocks/blockVSCode.js";
@@ -42,12 +42,12 @@ export const presetEverything = base.createPreset({
 		blockESLintRegexp,
 		blockESLintYML,
 		blockKnip,
-		blockMarkdownlint,
 		blockNvmrc,
 		blockPnpmDedupe,
-		blockPRCompliance,
+		blockOctoGuideStrict,
 		blockPrettierPluginCurly,
 		blockPrettierPluginPackageJson,
+		blockPrettierPluginSentencesPerLine,
 		blockPrettierPluginSh,
 		blockRenovate,
 		blockVSCode,

@@ -7,6 +7,22 @@ It also provides a collection of custom flags per [Bingo CLI > Template Flags](h
 npx create-typescript-app
 ```
 
+## Remote Repositories
+
+By default, `npx create-typescript-app` creates only a local Git repository.
+It will not send network requests to create a repository on GitHub.
+
+However, if you have an `origin` remote on GitHub, `create-typescript-app` will synchronize the local repository with it.
+That includes pushing the latest commits, setting repository labels, updating repository settings such as allowed merge strategies.
+
+A `--remote` CLI flag exists as a convenience to create a remote repository on GitHub:
+
+```shell
+npx create-typescript-app --remote
+```
+
+You can run with `--remote` when creating a new repository or transitioning an existing local Git repository.
+
 ## Required Flags
 
 These options can only be inferred when running on an existing repository.
@@ -50,12 +66,13 @@ Each defaults to a value based on the running system, including an repository if
 | `--bin`        | `string`   | Value to set in `package.json`'s `"bin"` property, per [FAQs > How can I use `bin`?](./FAQs.md#how-can-i-use-bin)   | _(none)_                                                                                       |
 | `--email`      | `string`   | Email address to be listed as the point of contact in docs and packages (e.g. `example@joshuakgoldberg.com`)        | Yours from `gh`, `git config`, or `npm whoami`                                                 |
 | `--emoji`      | `string`   | decorative emoji to use in descriptions and docs                                                                    | The last emoji from `description`, or `"💖"`                                                   |
-| `--funding`    | `string`   | GitHub organization or username to mention in `funding.yml`                                                         | The same as `owner`                                                                            |
+| `--funding`    | `string`   | GitHub organization or username to mention in `funding.yaml`                                                        | The same as `owner`                                                                            |
 | `--keywords`   | `string[]` | Any number of keywords to include in `package.json`                                                                 | _(none)_                                                                                       |
 | `--owner`      | `string`   | Organization or user owning the repository                                                                          | Yours from `gh` or `git config`                                                                |
 | `--pnpm`       | `string`   | pnpm version for `package.json`'s `packageManager` field                                                            | Existing value in `package.json` if it exists                                                  |
 | `--repository` | `string`   | Name for the new repository                                                                                         | The same as `--directory`                                                                      |
 | `--title`      | `string`   | 'Title Case' title for the repository                                                                               | Title-cased `repository`                                                                       |
+| `--type`       | `string`   | package.json modules type                                                                                           | Existing value in `package.json` if it exists, or `"module"`                                   |
 | `--version`    | `string`   | package version to publish as and store in `package.json`                                                           | Existing value in `package.json` if it exists, or `"0.0.0"`                                    |
 | `--words`      | `string[]` | additional words to add to the CSpell dictionary                                                                    | Existing `words` in a `cspell.json` file if it exists, and any new words in from other options |
 
@@ -65,11 +82,11 @@ For example, customizing the npm author and funding source to different values t
 npx create-typescript-app --author my-npm-username --funding MyGitHubOrganization
 ```
 
-Array flags can be specified as space-delineated strings and/or multiple times.
-For example, customizing keywords to three:
+Array flags can be specified as multiple times.
+For example, customizing keywords to two:
 
 ```shell
-npx create-typescript-app --keywords eslint --keywords "javascript typescript"
+npx create-typescript-app --keywords eslint --keywords typescript
 ```
 
 ## Block Exclusion Flags

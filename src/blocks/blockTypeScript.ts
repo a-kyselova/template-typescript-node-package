@@ -1,20 +1,42 @@
+import sortKeys from "sort-keys";
+import { CompilerOptionsSchema } from "zod-tsconfig";
+
 import { base } from "../base.js";
 import { getPackageDependencies } from "../data/packageData.js";
+import { getPrimaryBin } from "./bin/getPrimaryBin.js";
 import { blockDevelopmentDocs } from "./blockDevelopmentDocs.js";
 import { blockExampleFiles } from "./blockExampleFiles.js";
 import { blockGitHubActionsCI } from "./blockGitHubActionsCI.js";
 import { blockGitignore } from "./blockGitignore.js";
-import { blockMarkdownlint } from "./blockMarkdownlint.js";
+import { blockKnip } from "./blockKnip.js";
 import { blockPackageJson } from "./blockPackageJson.js";
 import { blockRemoveWorkflows } from "./blockRemoveWorkflows.js";
 import { blockVitest } from "./blockVitest.js";
 import { blockVSCode } from "./blockVSCode.js";
+import { intakeFileAsJson } from "./intake/intakeFileAsJson.js";
 
 export const blockTypeScript = base.createBlock({
 	about: {
 		name: "TypeScript",
 	},
-	produce({ options }) {
+	addons: {
+		compilerOptions: CompilerOptionsSchema.optional(),
+	},
+	intake({ files }) {
+		const raw = intakeFileAsJson(files, ["tsconfig.json"]);
+		const { data } = CompilerOptionsSchema.safeParse(raw?.compilerOptions);
+		if (!data) {
+			return undefined;
+		}
+
+		return {
+			compilerOptions: data,
+		};
+	},
+	produce({ addons, options }) {
+		const { compilerOptions } = addons;
+		const primaryBin = getPrimaryBin(options.bin, options.repository);
+
 		return {
 			addons: [
 				blockDevelopmentDocs({
@@ -64,6 +86,16 @@ export * from "./types.js";
 	}
 	`,
 					},
+					usage: [
+						`\`\`\`shell
+npm i ${options.repository}
+\`\`\`
+\`\`\`ts
+import { greet } from "${options.repository}";
+
+greet("Hello, world! ${options.emoji}");
+\`\`\``,
+					],
 				}),
 				blockGitignore({
 					ignores: ["/lib"],
@@ -71,14 +103,13 @@ export * from "./types.js";
 				blockGitHubActionsCI({
 					jobs: [{ name: "Type Check", steps: [{ run: "pnpm tsc" }] }],
 				}),
-				blockMarkdownlint({
-					ignores: ["lib/"],
+				blockKnip({
+					project: ["src/**/*.ts"],
 				}),
 				blockPackageJson({
 					properties: {
 						devDependencies: getPackageDependencies("typescript"),
 						files: ["lib/"],
-						main: "lib/index.js",
 						scripts: {
 							tsc: "tsc",
 						},
@@ -86,12 +117,12 @@ export * from "./types.js";
 				}),
 				blockVitest({ coverage: { include: ["src"] }, exclude: ["lib"] }),
 				blockVSCode({
-					debuggers: options.bin
+					debuggers: primaryBin
 						? [
 								{
 									name: "Debug Program",
 									preLaunchTask: "build",
-									program: options.bin,
+									program: primaryBin,
 									request: "launch",
 									skipFiles: ["<node_internals>/**"],
 									type: "node",
@@ -113,7 +144,7 @@ export * from "./types.js";
 			],
 			files: {
 				"tsconfig.json": JSON.stringify({
-					compilerOptions: {
+					compilerOptions: sortKeys({
 						declaration: true,
 						declarationMap: true,
 						esModuleInterop: true,
@@ -124,7 +155,8 @@ export * from "./types.js";
 						skipLibCheck: true,
 						strict: true,
 						target: "ES2022",
-					},
+						...compilerOptions,
+					}),
 					include: ["src"],
 				}),
 			},

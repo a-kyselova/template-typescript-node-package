@@ -15,7 +15,7 @@ describe("blockPrettier", () => {
 			  "addons": [
 			    {
 			      "addons": {
-			        "ignores": [
+			        "ignorePaths": [
 			          ".all-contributorsrc",
 			        ],
 			      },
@@ -60,8 +60,8 @@ describe("blockPrettier", () => {
 			        "properties": {
 			          "devDependencies": {
 			            "husky": "9.1.7",
-			            "lint-staged": "15.5.0",
-			            "prettier": "3.5.3",
+			            "lint-staged": "16.2.7",
+			            "prettier": "3.7.3",
 			          },
 			          "lint-staged": {
 			            "*": "prettier --ignore-unknown --write",
@@ -127,7 +127,7 @@ describe("blockPrettier", () => {
 			  "addons": [
 			    {
 			      "addons": {
-			        "ignores": [
+			        "ignorePaths": [
 			          ".all-contributorsrc",
 			        ],
 			      },
@@ -172,8 +172,8 @@ describe("blockPrettier", () => {
 			        "properties": {
 			          "devDependencies": {
 			            "husky": "9.1.7",
-			            "lint-staged": "15.5.0",
-			            "prettier": "3.5.3",
+			            "lint-staged": "16.2.7",
+			            "prettier": "3.7.3",
 			          },
 			          "lint-staged": {
 			            "*": "prettier --ignore-unknown --write",
@@ -209,6 +209,7 @@ describe("blockPrettier", () => {
 			    {
 			      "addons": {
 			        "files": [
+			          ".prettierrc",
 			          ".prettierrc.{c*,js,m*,t*}",
 			          "prettier.config*",
 			        ],
@@ -261,10 +262,12 @@ describe("blockPrettier", () => {
 				ignores: ["generated"],
 				overrides: [{ files: ".nvmrc", options: { parser: "yaml" } }],
 				plugins: [
+					"./lib/index.js",
 					"prettier-plugin-curly",
 					"prettier-plugin-packagejson",
 					"prettier-plugin-sh",
 				],
+				runBefore: ["pnpm build || exit 0"],
 			},
 			options: optionsBase,
 		});
@@ -274,7 +277,7 @@ describe("blockPrettier", () => {
 			  "addons": [
 			    {
 			      "addons": {
-			        "ignores": [
+			        "ignorePaths": [
 			          ".all-contributorsrc",
 			        ],
 			      },
@@ -306,6 +309,9 @@ describe("blockPrettier", () => {
 			            "name": "Prettier",
 			            "steps": [
 			              {
+			                "run": "pnpm build || exit 0",
+			              },
+			              {
 			                "run": "pnpm format --list-different",
 			              },
 			            ],
@@ -319,11 +325,11 @@ describe("blockPrettier", () => {
 			        "properties": {
 			          "devDependencies": {
 			            "husky": "9.1.7",
-			            "lint-staged": "15.5.0",
-			            "prettier": "3.5.3",
-			            "prettier-plugin-curly": "0.3.1",
-			            "prettier-plugin-packagejson": "2.5.10",
-			            "prettier-plugin-sh": "0.15.0",
+			            "lint-staged": "16.2.7",
+			            "prettier": "3.7.3",
+			            "prettier-plugin-curly": "0.4.1",
+			            "prettier-plugin-packagejson": "2.5.20",
+			            "prettier-plugin-sh": "0.18.0",
 			          },
 			          "lint-staged": {
 			            "*": "prettier --ignore-unknown --write",
@@ -365,11 +371,12 @@ describe("blockPrettier", () => {
 			/pnpm-lock.yaml
 			generated
 			",
-			    ".prettierrc.json": "{"$schema":"http://json.schemastore.org/prettierrc","overrides":[{"files":".nvmrc","options":{"parser":"yaml"}}],"plugins":["prettier-plugin-curly","prettier-plugin-packagejson","prettier-plugin-sh"],"useTabs":true}",
+			    ".prettierrc.json": "{"$schema":"http://json.schemastore.org/prettierrc","overrides":[{"files":".nvmrc","options":{"parser":"yaml"}}],"plugins":["./lib/index.js","prettier-plugin-curly","prettier-plugin-packagejson","prettier-plugin-sh"],"useTabs":true}",
 			  },
 			  "scripts": [
 			    {
 			      "commands": [
+			        "pnpm build || exit 0",
 			        "pnpm format --write",
 			      ],
 			      "phase": 4,

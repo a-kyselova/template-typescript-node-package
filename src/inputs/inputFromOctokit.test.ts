@@ -13,10 +13,7 @@ describe("inputFromOctokit", () => {
 				options: {},
 			},
 			fetchers: createMockFetchers(
-				vi.fn().mockResolvedValueOnce(
-					// eslint-disable-next-line n/no-unsupported-features/node-builtins
-					new Response(data),
-				),
+				vi.fn().mockResolvedValueOnce(new Response(data)),
 			),
 		});
 
@@ -31,13 +28,27 @@ describe("inputFromOctokit", () => {
 			},
 			fetchers: createMockFetchers(
 				vi.fn().mockResolvedValueOnce(
-					// eslint-disable-next-line n/no-unsupported-features/node-builtins
 					new Response("", {
 						status: 404,
 						statusText: "Not found.",
 					}),
 				),
 			),
+		});
+
+		expect(actual).toBe(undefined);
+	});
+
+	it("returns undefined when there is no octokit fetcher", async () => {
+		const actual = await testInput(inputFromOctokit, {
+			args: {
+				endpoint: "GET /repos/{owner}/{repo}/rulesets",
+				options: {},
+			},
+			fetchers: {
+				fetch: vi.fn(),
+				octokit: undefined,
+			},
 		});
 
 		expect(actual).toBe(undefined);

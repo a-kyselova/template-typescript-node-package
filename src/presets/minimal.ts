@@ -9,6 +9,7 @@ import { blockGitHubApps } from "../blocks/blockGitHubApps.js";
 import { blockGitHubIssueTemplates } from "../blocks/blockGitHubIssueTemplates.js";
 import { blockGitHubPRTemplate } from "../blocks/blockGitHubPRTemplate.js";
 import { blockGitignore } from "../blocks/blockGitignore.js";
+import { blockMain } from "../blocks/blockMain.js";
 import { blockMITLicense } from "../blocks/blockMITLicense.js";
 import { blockPackageJson } from "../blocks/blockPackageJson.js";
 import { blockPrettier } from "../blocks/blockPrettier.js";
@@ -22,7 +23,7 @@ import { blockRepositorySecrets } from "../blocks/blockRepositorySecrets.js";
 import { blockRepositorySettings } from "../blocks/blockRepositorySettings.js";
 import { blockSecurityDocs } from "../blocks/blockSecurityDocs.js";
 import { blockTemplatedWith } from "../blocks/blockTemplatedWith.js";
-import { blockTSup } from "../blocks/blockTSup.js";
+import { blockTSDown } from "../blocks/blockTSDown.js";
 import { blockTypeScript } from "../blocks/blockTypeScript.js";
 
 export const presetMinimal = base.createPreset({
@@ -42,6 +43,7 @@ export const presetMinimal = base.createPreset({
 		blockGitHubIssueTemplates,
 		blockGitHubPRTemplate,
 		blockGitignore,
+		blockMain,
 		blockMITLicense,
 		blockPackageJson,
 		blockPrettier,
@@ -55,7 +57,7 @@ export const presetMinimal = base.createPreset({
 		blockRepositorySettings,
 		blockSecurityDocs,
 		blockTemplatedWith,
-		blockTSup,
+		blockTSDown,
 		blockTypeScript,
 	],
 });

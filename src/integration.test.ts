@@ -5,6 +5,8 @@ import { producePreset } from "bingo-stratum";
 import { diffCreatedDirectory } from "bingo-testers";
 import { expect, test, vi } from "vitest";
 
+Error.stackTraceLimit = 9001;
+
 import {
 	base,
 	BaseOptions,
@@ -13,8 +15,9 @@ import {
 	blockCSpell,
 	blockESLint,
 	blockKnip,
+	blockMain,
+	blockRenovate,
 	blockTemplatedWith,
-	blockTSup,
 	presets,
 } from "./index.js";
 
@@ -55,17 +58,16 @@ test("Producing the everything preset matches the files in this repository", asy
 				blockCSpell({
 					words: [
 						"Anson",
+						"TSESTree",
 						"apexskier",
 						"attw",
-						"boop",
 						"dbaeumer",
 						"infile",
 						"joshuakgoldberg",
-						"markdownlintignore",
 						"mshick",
-						"mtfoley",
-						"npmjs",
+						"octoguide",
 						"stefanzweifel",
+						"ts-prunerc",
 					],
 				}),
 				blockESLint({
@@ -78,20 +80,36 @@ If you're interested in learning more, see the 'getting started' docs on:
 - ESLint: https://eslint.org
 - typescript-eslint: https://typescript-eslint.io`,
 					],
-					rules: [
+					extensions: [
 						{
-							comment:
-								"These on-by-default rules work well for this repo if configured",
-							entries: {
-								"@typescript-eslint/prefer-nullish-coalescing": [
-									"error",
-									{ ignorePrimitives: true },
-								],
-								"@typescript-eslint/restrict-template-expressions": [
-									"error",
-									{ allowBoolean: true, allowNullish: true, allowNumber: true },
-								],
-							},
+							files: ["**/*.{js,ts}"],
+							rules: [
+								{
+									comment:
+										"These on-by-default rules work well for this repo if configured",
+									entries: {
+										"@typescript-eslint/prefer-nullish-coalescing": [
+											"error",
+											{ ignorePrimitives: true },
+										],
+										"@typescript-eslint/restrict-template-expressions": [
+											"error",
+											{
+												allowBoolean: true,
+												allowNullish: true,
+												allowNumber: true,
+											},
+										],
+										"n/no-unsupported-features/node-builtins": [
+											"error",
+											{
+												allowExperimental: true,
+												ignores: ["import.meta.dirname"],
+											},
+										],
+									},
+								},
+							],
 						},
 					],
 				}),
@@ -103,8 +121,11 @@ If you're interested in learning more, see the 'getting started' docs on:
 						"trash-cli",
 					],
 				}),
-				blockTSup({
+				blockMain({
 					runArgs: ["--version"],
+				}),
+				blockRenovate({
+					ignoreDeps: ["all-contributors-cli"],
 				}),
 			],
 			blocks: {
@@ -115,7 +136,7 @@ If you're interested in learning more, see the 'getting started' docs on:
 	});
 
 	const processText = (text: string, filePath: string) =>
-		/all-contributorsrc|js|md|ts|yml/.test(filePath)
+		/all-contributorsrc|js|md|ts|yaml/.test(filePath)
 			? prettier.format(text, { filepath: filePath, useTabs: true })
 			: text;
 

@@ -10,7 +10,7 @@ export const blockGitHubIssueTemplates = base.createBlock({
 			files: {
 				".github": {
 					ISSUE_TEMPLATE: {
-						"01-bug.yml": formatYaml({
+						"01-bug.yaml": formatYaml({
 							body: [
 								{
 									attributes: {
@@ -25,7 +25,7 @@ export const blockGitHubIssueTemplates = base.createBlock({
 											},
 											{
 												label:
-													"I have pulled the latest `main` branch of the repository.",
+													"I have pulled in the newest version of the project.",
 												required: true,
 											},
 											{
@@ -69,7 +69,7 @@ export const blockGitHubIssueTemplates = base.createBlock({
 							name: "🐛 Bug",
 							title: "🐛 Bug: <short description of the bug>",
 						}),
-						"02-documentation.yml": formatYaml({
+						"02-documentation.yaml": formatYaml({
 							body: [
 								{
 									attributes: {
@@ -79,7 +79,7 @@ export const blockGitHubIssueTemplates = base.createBlock({
 										options: [
 											{
 												label:
-													"I have pulled the latest `main` branch of the repository.",
+													"I have looked at the latest `main` branch of the repository.",
 												required: true,
 											},
 											{
@@ -113,7 +113,7 @@ export const blockGitHubIssueTemplates = base.createBlock({
 							name: "📝 Documentation",
 							title: "📝 Documentation: <short description of the request>",
 						}),
-						"03-feature.yml": formatYaml({
+						"03-feature.yaml": formatYaml({
 							body: [
 								{
 									attributes: {
@@ -123,7 +123,7 @@ export const blockGitHubIssueTemplates = base.createBlock({
 										options: [
 											{
 												label:
-													"I have pulled the latest `main` branch of the repository.",
+													"I have looked at the latest version of the project.",
 												required: true,
 											},
 											{
@@ -158,7 +158,7 @@ export const blockGitHubIssueTemplates = base.createBlock({
 							name: "🚀 Feature",
 							title: "🚀 Feature: <short description of the feature>",
 						}),
-						"04-tooling.yml": formatYaml({
+						"04-tooling.yaml": formatYaml({
 							body: [
 								{
 									attributes: {
@@ -173,7 +173,7 @@ export const blockGitHubIssueTemplates = base.createBlock({
 											},
 											{
 												label:
-													"I have pulled the latest `main` branch of the repository.",
+													"I have pulled in the newest version of the project.",
 												required: true,
 											},
 											{

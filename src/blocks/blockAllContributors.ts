@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 import { base } from "../base.js";
-import { ownerContributions } from "../data/contributions.js";
+import { startingOwnerContributions } from "../data/contributions.js";
 import { Contributor } from "../schemas.js";
 import { resolveUses } from "./actions/resolveUses.js";
 import { blockPrettier } from "./blockPrettier.js";
@@ -16,6 +16,20 @@ export const blockAllContributors = base.createBlock({
 	},
 	produce({ options }) {
 		const contributions = options.contributors?.length;
+		const ownerContributions = Array.from(
+			new Set(
+				[
+					options.contributors?.find(
+						(contributor) =>
+							contributor.login.toLowerCase() === options.owner.toLowerCase(),
+					)?.contributions,
+					startingOwnerContributions,
+				]
+					.filter(Boolean)
+					.flat(),
+			),
+		);
+
 		return {
 			addons: [
 				blockPrettier({
@@ -23,11 +37,19 @@ export const blockAllContributors = base.createBlock({
 				}),
 				blockREADME({
 					badges: [
-						`<!-- prettier-ignore-start -->
-\t<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-\t<a href="#contributors" target="_blank"><img alt="👪 All Contributors: ${contributions}" src="https://img.shields.io/badge/%F0%9F%91%AA_all_contributors-${contributions}-21bb42.svg" /></a>
+						{
+							alt: `👪 All Contributors: ${contributions}`,
+							comments: {
+								after: `
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 \t<!-- prettier-ignore-end -->`,
+								before: `<!-- prettier-ignore-start -->
+\t<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+\t`,
+							},
+							href: "#contributors",
+							src: `https://img.shields.io/badge/%F0%9F%91%AA_all_contributors-${contributions}-21bb42.svg`,
+						},
 					],
 					sections: options.contributors
 						? [printAllContributorsTable(options.contributors)]
@@ -43,17 +65,25 @@ export const blockAllContributors = base.createBlock({
 				}),
 			],
 			files: {
-				".all-contributorsrc": JSON.stringify({
-					badgeTemplate:
-						'	<a href="#contributors" target="_blank"><img alt="👪 All Contributors: <%= contributors.length %>" src="https://img.shields.io/badge/%F0%9F%91%AA_all_contributors-<%= contributors.length %>-21bb42.svg" /></a>',
-					contributors: options.contributors ?? [],
-					contributorsSortAlphabetically: true,
-					projectName: options.repository,
-					projectOwner: options.owner,
-				}),
+				".all-contributorsrc": JSON.stringify(
+					{
+						badgeTemplate:
+							'	<a href="#contributors" target="_blank"><img alt="👪 All Contributors: <%= contributors.length %>" src="https://img.shields.io/badge/%F0%9F%91%AA_all_contributors-<%= contributors.length %>-21bb42.svg" /></a>',
+						commitType: "docs",
+						contributors: options.contributors ?? [],
+						contributorsPerLine: 7,
+						contributorsSortAlphabetically: true,
+						files: ["README.md"],
+						projectName: options.repository,
+						projectOwner: options.owner,
+						repoType: "github",
+					},
+					null,
+					2,
+				),
 				".github": {
 					workflows: {
-						"contributors.yml": createSoloWorkflowFile({
+						"contributors.yaml": createSoloWorkflowFile({
 							name: "Contributors",
 							on: {
 								push: {
@@ -86,7 +116,7 @@ export const blockAllContributors = base.createBlock({
 			scripts: [
 				{
 					commands: [
-						`pnpx all-contributors-cli add ${options.owner} ${ownerContributions.join(",")}`,
+						`pnpx all-contributors-cli@6.23.1 add ${options.owner} ${ownerContributions.join(",")}`,
 					],
 					phase: CommandPhase.Process,
 				},
@@ -102,7 +132,6 @@ function printAllContributorsTable(contributors: Contributor[]) {
 		`<!-- spellchecker: disable -->`,
 		`<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->`,
 		`<!-- prettier-ignore-start -->`,
-		`<!-- markdownlint-disable -->`,
 		`<table>`,
 		`  <tbody>`,
 		`    <tr>`,
@@ -117,7 +146,6 @@ function printAllContributorsTable(contributors: Contributor[]) {
 		`  </tbody>`,
 		`</table>`,
 		``,
-		`<!-- markdownlint-restore -->`,
 		`<!-- prettier-ignore-end -->`,
 		``,
 		`<!-- ALL-CONTRIBUTORS-LIST:END -->`,

@@ -1,5 +1,5 @@
-import { testBlock } from "bingo-stratum-testers";
-import { describe, expect, test, vi } from "vitest";
+import { testBlock, testIntake } from "bingo-stratum-testers";
+import { describe, expect, it, test, vi } from "vitest";
 
 import { blockKnip } from "./blockKnip.js";
 import { optionsBase } from "./options.fakes.js";
@@ -50,7 +50,7 @@ describe("blockKnip", () => {
 			      "addons": {
 			        "properties": {
 			          "devDependencies": {
-			            "knip": "5.46.0",
+			            "knip": "5.71.0",
 			          },
 			          "scripts": {
 			            "lint:knip": "knip",
@@ -59,9 +59,17 @@ describe("blockKnip", () => {
 			      },
 			      "block": [Function],
 			    },
+			    {
+			      "addons": {
+			        "files": [
+			          ".ts-prunerc*",
+			        ],
+			      },
+			      "block": [Function],
+			    },
 			  ],
 			  "files": {
-			    "knip.json": "{"$schema":"https://unpkg.com/knip@5.46.0/schema.json","entry":["src/index.ts","src/**/*.test.*"],"ignoreExportsUsedInFile":{"interface":true,"type":true},"project":["src/**/*.ts"]}",
+			    "knip.json": "{"$schema":"https://unpkg.com/knip@5.71.0/schema.json","ignoreExportsUsedInFile":{"interface":true,"type":true},"treatConfigHintsAsErrors":true}",
 			  },
 			}
 		`);
@@ -70,7 +78,9 @@ describe("blockKnip", () => {
 	test("with addons", () => {
 		const creation = testBlock(blockKnip, {
 			addons: {
+				entry: ["src/index.ts"],
 				ignoreDependencies: ["abc", "def"],
+				project: ["src/**/*.ts"],
 			},
 			options: optionsBase,
 		});
@@ -111,7 +121,7 @@ describe("blockKnip", () => {
 			      "addons": {
 			        "properties": {
 			          "devDependencies": {
-			            "knip": "5.46.0",
+			            "knip": "5.71.0",
 			          },
 			          "scripts": {
 			            "lint:knip": "knip",
@@ -120,9 +130,17 @@ describe("blockKnip", () => {
 			      },
 			      "block": [Function],
 			    },
+			    {
+			      "addons": {
+			        "files": [
+			          ".ts-prunerc*",
+			        ],
+			      },
+			      "block": [Function],
+			    },
 			  ],
 			  "files": {
-			    "knip.json": "{"$schema":"https://unpkg.com/knip@5.46.0/schema.json","entry":["src/index.ts","src/**/*.test.*"],"ignoreDependencies":["abc","def"],"ignoreExportsUsedInFile":{"interface":true,"type":true},"project":["src/**/*.ts"]}",
+			    "knip.json": "{"$schema":"https://unpkg.com/knip@5.71.0/schema.json","entry":["src/index.ts"],"ignoreDependencies":["abc","def"],"ignoreExportsUsedInFile":{"interface":true,"type":true},"project":["src/**/*.ts"],"treatConfigHintsAsErrors":true}",
 			  },
 			}
 		`);
@@ -170,7 +188,7 @@ describe("blockKnip", () => {
 			      "addons": {
 			        "properties": {
 			          "devDependencies": {
-			            "knip": "5.46.0",
+			            "knip": "5.71.0",
 			          },
 			          "scripts": {
 			            "lint:knip": "knip",
@@ -182,10 +200,7 @@ describe("blockKnip", () => {
 			    {
 			      "addons": {
 			        "files": [
-			          ".knip*",
-			          "knip.{c,m,t}*",
-			          "knip.js",
-			          "knip.jsonc",
+			          ".ts-prunerc*",
 			        ],
 			      },
 			      "block": [Function],
@@ -201,9 +216,41 @@ describe("blockKnip", () => {
 			    },
 			  ],
 			  "files": {
-			    "knip.json": "{"$schema":"https://unpkg.com/knip@5.46.0/schema.json","entry":["src/index.ts","src/**/*.test.*"],"ignoreExportsUsedInFile":{"interface":true,"type":true},"project":["src/**/*.ts"]}",
+			    "knip.json": "{"$schema":"https://unpkg.com/knip@5.71.0/schema.json","ignoreExportsUsedInFile":{"interface":true,"type":true},"treatConfigHintsAsErrors":true}",
 			  },
 			}
 		`);
+	});
+
+	describe("intake", () => {
+		it("returns undefined when knip.json does not exist", () => {
+			const actual = testIntake(blockKnip, {
+				files: {},
+			});
+
+			expect(actual).toBeUndefined();
+		});
+
+		it("returns undefined when knip.json does not contain ignoreDependencies", () => {
+			const actual = testIntake(blockKnip, {
+				files: {
+					"knip.json": [JSON.stringify({ other: true })],
+				},
+			});
+
+			expect(actual).toBeUndefined();
+		});
+
+		it("returns ignoreDependencies when knip.json contains ignoreDependencies", () => {
+			const ignoreDependencies = ["a", "b", "c"];
+
+			const actual = testIntake(blockKnip, {
+				files: {
+					"knip.json": [JSON.stringify({ ignoreDependencies })],
+				},
+			});
+
+			expect(actual).toEqual({ ignoreDependencies });
+		});
 	});
 });
