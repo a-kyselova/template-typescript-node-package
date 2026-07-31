@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.61.1](///compare/2.61.0...2.61.1) (2026-07-11)
+
+### Bug Fixes
+
+- remove redundant tsc script ([#2383](undefined/undefined/undefined/issues/2383)) 7e1d9d7, closes #2375
+
+## [2.61.0](///compare/2.60.3...2.61.0) (2026-06-20)
+
+### Features
+
+- update CI conventions ([#2380](undefined/undefined/undefined/issues/2380)) 9b9c669, closes #2379
+
+## [2.60.3](///compare/2.60.2...2.60.3) (2026-06-18)
+
+### Bug Fixes
+
+- update blocks to conform to latest eslint-plugin-package-json standards ([#2377](undefined/undefined/undefined/issues/2377)) 266a405, closes #2374
+
 ## [2.60.2](///compare/2.60.1...2.60.2) (2026-05-04)
 
 ### Bug Fixes
